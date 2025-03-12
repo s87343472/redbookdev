@@ -7,28 +7,26 @@ import Faq from '@/components/Faq';
 
 import SubmitForm from './SubmitForm';
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({
-    locale,
-    namespace: 'Metadata.submit',
-  });
-
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('Submit');
   return {
     title: t('title'),
+    description: t('subTitle'),
   };
 }
 
-export default function Page() {
+export default function Submit() {
   const t = useTranslations('Submit');
 
   return (
-    <div className='mx-auto max-w-pc'>
-      <div className='flex-y-center my-3 flex lg:my-10'>
-        <h1 className='text-5xl font-bold'>{t('title')}</h1>
-        <h2 className='mt-[5px] text-sm font-bold lg:my-3'>{t('subTitle')}</h2>
+    <div className='container mx-auto px-4 py-8'>
+      <div className='mb-8 text-center'>
+        <h1 className='mb-2 text-3xl font-bold'>{t('title')}</h1>
+        <p className='text-gray-400'>{t('subTitle')}</p>
+      </div>
+      <div className='flex justify-center'>
         <SubmitForm />
       </div>
-      <Faq />
     </div>
   );
 }

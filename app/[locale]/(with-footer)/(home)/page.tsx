@@ -36,10 +36,32 @@ export const revalidate = RevalidateOneHour;
 export default async function Page() {
   const supabase = createClient();
   const t = await getTranslations('Home');
-  const [{ data: categoryList }, { data: navigationList }] = await Promise.all([
+  const [{ data: categoryList }, { data: projectList }] = await Promise.all([
     supabase.from('navigation_category').select(),
-    supabase.from('web_navigation').select().order('collection_time', { ascending: false }).limit(12),
+    supabase
+      .from('redbook_projects')
+      .select()
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(12),
   ]);
+
+  // 将 redbook_projects 数据转换为 web_navigation 格式
+  const navigationList = projectList?.map(project => ({
+    id: project.id,
+    name: project.title,
+    title: project.title,
+    content: project.description,
+    detail: project.description,
+    url: project.website_url,
+    image_url: project.screenshot_urls[0] || '',
+    thumbnail_url: project.screenshot_urls[0] || '',
+    website_data: '',
+    collection_time: project.created_at,
+    star_rating: 5,
+    tag_name: project.tags?.join(',') || '',
+    category_name: project.category
+  }));
 
   return (
     <div className='relative w-full'>
@@ -53,7 +75,7 @@ export default async function Page() {
         </div>
         <div className='mb-10 mt-5'>
           <TagList
-            data={categoryList!.map((item) => ({
+            data={(categoryList || []).map((item) => ({
               id: String(item.id),
               name: item.name,
               href: `/category/${item.name}`,
@@ -62,7 +84,7 @@ export default async function Page() {
         </div>
         <div className='flex flex-col gap-5'>
           <h2 className='text-center text-[18px] lg:text-[32px]'>{t('ai-navigate')}</h2>
-          <WebNavCardList dataList={navigationList!} />
+          <WebNavCardList dataList={navigationList || []} />
           <Link
             href='/explore'
             className='mx-auto mb-5 flex w-fit items-center justify-center gap-5 rounded-[9px] border border-white p-[10px] text-sm leading-4 hover:opacity-70'

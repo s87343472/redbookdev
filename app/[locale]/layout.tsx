@@ -1,7 +1,8 @@
 import { NextIntlClientProvider, useMessages } from 'next-intl';
+import { Metadata } from 'next';
 
 import { Toaster } from '@/components/ui/sonner';
-import Navigation from '@/components/home/Navigation';
+import Navigation from '../components/Navigation';
 
 import './globals.css';
 
@@ -11,6 +12,17 @@ import GoogleAdScript from '@/components/ad/GoogleAdScript';
 import SeoScript from '@/components/seo/SeoScript';
 
 import Loading from './loading';
+
+export const metadata: Metadata = {
+  icons: {
+    icon: [
+      {
+        url: '/favicon.png',
+        type: 'image/png',
+      },
+    ],
+  },
+};
 
 export default function RootLayout({
   children,
@@ -23,6 +35,9 @@ export default function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning className='dark'>
+      <head>
+        <link rel="icon" type="image/png" href="/favicon.png" />
+      </head>
       <body className='relative mx-auto flex min-h-screen flex-col bg-tap4-black text-white'>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Toaster

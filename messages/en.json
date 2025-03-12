@@ -3,69 +3,85 @@
     "loading": "loading..."
   },
   "Navigation": {
-    "title": "Open-source Tap4 AI Tools Directory",
-    "discover": "Discover AI",
+    "title": "RedBook Dev",
+    "discover": "Discover",
     "submit": "Submit",
     "newtools": "New Tools",
     "startup": "Startup",
     "menu": "menu"
   },
   "Footer": {
-    "title": "Open-source Tap4 AI Tools Directory",
-    "subTitle": "Discover the best AI tools of 2024 with the Tap4 AI Tools Directory!",
+    "title": "RedBook Dev",
+    "subTitle": "Discover great RedBook developer works on RedBook Dev!",
     "support": "Support",
-    "tap4": "Tap4 AI",
-    "tattoo": "AI Tattoo Generator",
+    "tap4": "RedBook Dev",
+    "tattoo": "RedBook Developer",
     "privacy": "Privacy policy",
     "termsConditions": "Terms & Conditions",
     "contactUs": "Contact Us"
   },
   "Faq": {
-    "title": "Frequently Asked Questions",
+    "title": "FAQ",
     "1": {
-      "question": "What is Open-source Tap4 AI Tools Directory?",
-      "answer": "Tap4 AI Tools Directory - tap4.ai is building an ai tools directory that helps you get your favorite ai tools. It can get ai writing tools, ai markting tools, ai paraphrasing tools, ai seo tools, ai study tools, ai generator tools, ai research tools, ai art tools, ai music tools, ai video tools, ai coding tools, ai photo tools and more here."
+      "question": "What is RedBook Dev?",
+      "answer": "RedBook Dev is a platform showcasing excellent RedBook developer works. Here, you can discover various innovative RedBook-related tools and applications."
     },
     "2": {
-      "question": "How to found your ai tools in tap4 ai tools directory?",
-      "answer-1": "1. Open tap4.ai.",
-      "answer-2": "2. Explore the ai tools in the tap4 ai tools directory.",
-      "answer-3": "3. Click the ai tools that you need to get the detail and visit it."
+      "question": "How to find great works on RedBook Dev?",
+      "answer-1": "1. Visit redbookdev.showhntoday.com",
+      "answer-2": "2. Browse the showcased works",
+      "answer-3": "3. Click on interesting works to view details"
     },
     "3": {
-      "question": "What are the main features of Tap4 AI Tools Directory?",
-      "answer-1": "1. Free AI Tools Directory: It's free to found your favorite AI Tools here.",
-      "answer-2": "2. Startup List: The free startup list for ai tools developers."
+      "question": "What are the main features of RedBook Dev?",
+      "answer-1": "1. Free Showcase Platform: Showcase your RedBook development works here for free",
+      "answer-2": "2. Creator Community: Connect with RedBook developers, share experiences and ideas"
     },
     "4": {
-      "question": "Is it free to submit ai tools to Tap4 AI Tools Directory?",
-      "answer": "Yes, it's free currently. But you should share the backlink for Tap4 AI Tools Directory!"
+      "question": "Why showcase your project here?",
+      "answer": "1. Get additional project exposure channels. 2. Receive high-quality external link support. 3. Interact and learn from other participants. 4. Increase your project's visibility."
     },
     "5": {
+      "question": "What types of projects are supported?",
+      "answer": "We welcome all projects participating in the RedBook Independent Developer Competition, including but not limited to: Mini Programs, Websites, Apps, Development Tools, Productivity Tools, etc."
+    },
+    "6": {
+      "question": "How to improve project presentation?",
+      "answer": "1. Provide clear and detailed project descriptions. 2. Add appropriate project categories and tags. 3. Include high-quality RedBook note links. 4. Ensure project links are accessible."
+    },
+    "7": {
+      "question": "Is the platform free?",
+      "answer": "The platform is completely free. Our goal is to help independent developers gain more exposure opportunities and external link support."
+    },
+    "8": {
+      "question": "How to resolve issues?",
+      "answer": "If you encounter any problems while using the platform, you can contact us by sending an email to subscribe@showhntoday.com."
+    },
+    "9": {
       "question": "What's the categories list of AI Tools that Tap4 AI Tools Directory support?",
       "answer": "We will support all kinds of AI Tools later. Please wait for a few days."
     },
-    "6": {
+    "10": {
       "question": "What's the frequency for the up of AI tools in Tap4 AI Directory?",
       "answer": "The list of AI tools will be updated daily."
     },
-    "7": {
+    "11": {
       "question": "Is it support GPT-4o or Sora AI here?",
       "answer": "You can get the GPT-4o or Sora AI tool here. Here is the introduction of GPT-4o and Sora video, and you can visit the website of the tools."
     },
-    "8": {
+    "12": {
       "question": "Troubleshooting",
       "answer": "If the content aren't appearing, try a different browser, clear your cache. If issues persist, contact us at contact@6677.ai."
     },
-    "9": {
+    "13": {
       "question": "How does the content of Tap4 AI Directory get generated?",
       "answer": "The content of the description of the ai tools is generated by GPT-4o from OpenAI."
     },
-    "10": {
+    "14": {
       "question": "What are the usage rights of the AI tools?",
       "answer": "Tap4 AI Tools Directory is just the AI Directory for AI tools. The usage rights of the AI tools are based on the AI tools' website."
     },
-    "11": {
+    "15": {
       "question": "Does the webui of Tap4 AI Directory is open source?",
       "answer": "Yes, we will open source the webui of Tap4 AI Directory in the github(https://github.com/6677-ai/tap4-ai-webui). Please star us."
     }
@@ -118,10 +134,10 @@
     "goHome": "go home"
   },
   "Home": {
-    "title": "Discover The Best AI Tools 2024",
-    "subTitle": "Get your favorite AI tools in Open-source Tap4 AI Tools Directory. AI tools list are updated daily by GPT-4o. It's free to submit here to enhance your SEO now. ",
-    "ai-navigate": "AI Tools List",
-    "exploreMore": "Get More AI Tools",
+    "title": "RedBook Dev - Discover Great RedBook Developer Works",
+    "subTitle": "Showcase your creativity and gain more attention",
+    "ai-navigate": "Works Showcase",
+    "exploreMore": "View More Works",
     "checkDetail": "View Detail",
     "search": "Search",
     "result": "Search Result",
@@ -132,15 +148,23 @@
     "empty": "No data available"
   },
   "Submit": {
-    "title": "Submit your AI Tool",
-    "subTitle": "Submit your AI Tool and Get traffic from Tap4 AI Directory",
-    "website": "Website Name",
-    "url": "Website URL",
-    "submit": "Submit",
-    "add": "Add",
-    "text": "to your website homepage, And then you can submit your website successfully for free！",
-    "networkError": "Network Error",
-    "success": "success"
+    "title": "Submit Your Project",
+    "subTitle": "Showcase your creativity and gain more attention",
+    "form": {
+      "title": "Project Name",
+      "description": "Project Description",
+      "url": "Project URL",
+      "redbook_url": "RedBook Note URL",
+      "creator_name": "Developer Nickname",
+      "creator_redbook_id": "RedBook ID",
+      "category": "Project Category",
+      "tags": "Project Tags (comma separated)",
+      "submit": "Submit",
+      "submitting": "Submitting...",
+      "success": "Submitted successfully! Please wait for review",
+      "error": "Submission failed, please try again later",
+      "pending_notice": "After submission, please wait for review before it appears in the project list"
+    }
   },
   "Startup": {
     "title": "Kickstart Your Startup Launch",
@@ -159,8 +183,8 @@
     }
   },
   "Explore": {
-    "title": "Discover The Best AI Tools 2024",
-    "subTitle": "Get your favorite AI tools in Tap4 AI Tools Directory. AI tools list are updated daily by GPT-4o."
+    "title": "Discover Great RedBook Developer Works",
+    "subTitle": "Find more innovative RedBook development works on RedBook Dev"
   },
   "Metadata": {
     "home": {

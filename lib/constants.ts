@@ -8,9 +8,13 @@ export const NAV_LINKS = [
     href: '/submit',
   },
   {
-    code: 'startup',
-    href: '/startup',
+    code: 'admin',
+    href: '/admin',
   },
+  // {
+  //   code: 'startup',
+  //   href: '/startup',
+  // },
 ];
 
 export const RevalidateOneHour = 3600;

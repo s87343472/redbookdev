@@ -1,11 +1,69 @@
-# Open Source Tap4 AI Web UI
+# RedBook Dev
 
-This is an open-source AI Tools Directory project from [Tap4 AI Tool Directory](https://tap4.ai). Our goal is to make it
-easy for everyone to have their own AI Tools Directory, to collect their favorite AI tool products. This project is very
-lightweight and easy to maintain, suitable for individual developers interested in AI navigation sites, and also
-suitable for learners interested in NextJs. Everyone is welcome to fork and star.
+RedBook Dev 是一个展示优秀小红书开发者作品的平台。在这里，你可以发现各种创新的小红书相关工具和应用。
 
-[Simplified Chinese](https://github.com/6677-ai/tap4-ai-webui/blob/main/README.zh-CN.md) | English
+## 功能特点
+
+- 作品展示：展示小红书独立开发者的优秀作品
+- 项目分类：支持多种项目类型的分类展示
+- 搜索功能：快速找到感兴趣的项目
+- 国际化：支持中文和英文
+- SEO 友好：支持搜索引擎优化
+
+## 技术栈
+
+- Next.js 14 (App Router)
+- Supabase 数据库
+- Tailwind CSS
+- next-intl 国际化
+- TypeScript
+
+## 本地开发
+
+### 环境要求
+
+- Node.js >= 20.0.0
+- pnpm >= 8.0.0
+
+### 安装依赖
+
+```bash
+pnpm install
+```
+
+### 开发模式
+
+```bash
+pnpm dev
+```
+
+### 构建
+
+```bash
+pnpm build
+```
+
+## 环境变量
+
+创建 `.env.local` 文件并添加以下配置：
+
+```bash
+# 网站域名
+NEXT_PUBLIC_SITE_URL=https://redbookdev.showhntoday.com
+
+# 联系邮箱
+CONTACT_US_EMAIL=subscribe@showhntoday.com
+
+# Supabase 配置
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+```
+
+## 部署
+
+本项目使用 Vercel 进行部署。点击下面的按钮一键部署：
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/redbook-dev)
 
 ## Support Tap4 AI in Product Hunt
 

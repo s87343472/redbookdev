@@ -34,6 +34,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      redbook_projects: {
+        Row: {
+          id: string;
+          title: string;
+          description: string;
+          website_url: string;
+          redbook_url: string;
+          creator_name: string;
+          creator_redbook_id: string;
+          status: 'pending' | 'approved' | 'rejected';
+          category: string;
+          tags: string[];
+          screenshot_urls: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description: string;
+          website_url: string;
+          redbook_url: string;
+          creator_name: string;
+          creator_redbook_id: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          category: string;
+          tags?: string[];
+          screenshot_urls?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string;
+          website_url?: string;
+          redbook_url?: string;
+          creator_name?: string;
+          creator_redbook_id?: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          category?: string;
+          tags?: string[];
+          screenshot_urls?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       submit: {
         Row: {
           created_at: string;
@@ -66,51 +114,79 @@ export type Database = {
       };
       web_navigation: {
         Row: {
-          category_name: string;
-          collection_time: string;
-          content: string;
-          detail: string;
-          id: number;
-          image_url: string;
+          id: string | number;
           name: string;
-          star_rating: number;
-          tag_name: string;
-          thumbnail_url: string;
-          title: string;
-          url: string;
-          website_data: string;
+          title: string | null;
+          content: string | null;
+          detail: string | null;
+          url: string | null;
+          image_url: string | null;
+          thumbnail_url: string | null;
+          website_data: string | null;
+          collection_time: string | null;
+          star_rating: number | null;
+          tag_name: string | null;
+          category_name: string | null;
         };
         Insert: {
-          category_name?: string | null;
-          collection_time?: string | null;
+          id?: string | number;
+          name: string;
+          title?: string | null;
           content?: string | null;
           detail?: string | null;
-          id?: number;
+          url?: string | null;
           image_url?: string | null;
-          name: string;
+          thumbnail_url?: string | null;
+          website_data?: string | null;
+          collection_time?: string | null;
           star_rating?: number | null;
           tag_name?: string | null;
-          thumbnail_url?: string | null;
-          title?: string | null;
-          url?: string | null;
-          website_data?: string | null;
+          category_name?: string | null;
         };
         Update: {
-          category_name?: string | null;
-          collection_time?: string | null;
+          id?: string | number;
+          name?: string;
+          title?: string | null;
           content?: string | null;
           detail?: string | null;
-          id?: number;
+          url?: string | null;
           image_url?: string | null;
-          name?: string;
+          thumbnail_url?: string | null;
+          website_data?: string | null;
+          collection_time?: string | null;
           star_rating?: number | null;
           tag_name?: string | null;
-          thumbnail_url?: string | null;
-          title?: string | null;
-          url?: string | null;
-          website_data?: string | null;
+          category_name?: string | null;
         };
         Relationships: [];
+      };
+      profiles: {
+        Row: {
+          id: string;
+          role: 'user' | 'admin';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          role?: 'user' | 'admin';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          role?: 'user' | 'admin';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ];
       };
     };
     Views: {
@@ -129,7 +205,20 @@ export type Database = {
 };
 
 export type NavigationCategory = Database['public']['Tables']['navigation_category']['Row'];
-export type Submit = Database['public']['Tables']['submit']['Row'];
+export type Submit = {
+  id: number
+  created_at: string
+  title: string
+  description: string
+  url: string
+  redbook_url: string
+  creator_name: string
+  creator_redbook_id: string
+  category: string
+  tags: string[]
+  screenshot_urls: string[]
+  status: 'pending' | 'approved' | 'rejected'
+}
 export type WebNavigation = Database['public']['Tables']['web_navigation']['Row'];
 
 type PublicSchema = Database[Extract<keyof Database, 'public'>];
@@ -203,3 +292,19 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
     ? PublicSchema['Enums'][PublicEnumNameOrOptions]
     : never;
+
+export interface RedBookProject {
+  id: string
+  title: string
+  description: string
+  website_url: string
+  redbook_url: string
+  creator_name: string
+  creator_redbook_id: string
+  status: 'pending' | 'approved' | 'rejected'
+  category: string
+  tags: string[]
+  screenshot_urls: string[]
+  created_at: string
+  updated_at: string
+}

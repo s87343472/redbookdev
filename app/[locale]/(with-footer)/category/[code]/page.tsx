@@ -25,12 +25,13 @@ export async function generateMetadata({ params }: { params: { code: string } })
 
 export default async function Page({ params }: { params: { code: string } }) {
   const supabase = createClient();
-  const [{ data: categoryList }, { data: navigationList, count }] = await Promise.all([
+  const [{ data: categoryList }, { data: projectList, count }] = await Promise.all([
     supabase.from('navigation_category').select().eq('name', params.code),
     supabase
-      .from('web_navigation')
+      .from('redbook_projects')
       .select('*', { count: 'exact' })
-      .eq('category_name', params.code)
+      .eq('status', 'approved')
+      .eq('category', params.code)
       .range(0, InfoPageSize - 1),
   ]);
 
@@ -38,10 +39,27 @@ export default async function Page({ params }: { params: { code: string } }) {
     notFound();
   }
 
+  // 将 redbook_projects 数据转换为 web_navigation 格式
+  const navigationList = projectList?.map(project => ({
+    id: project.id,
+    name: project.title,
+    title: project.title,
+    content: project.description,
+    detail: project.description,
+    url: project.website_url,
+    image_url: project.screenshot_urls[0] || '',
+    thumbnail_url: project.screenshot_urls[0] || '',
+    website_data: '',
+    collection_time: project.created_at,
+    star_rating: 5,
+    tag_name: project.tags?.join(',') || '',
+    category_name: project.category
+  }));
+
   return (
     <Content
       headerTitle={categoryList[0]!.title || params.code}
-      navigationList={navigationList!}
+      navigationList={navigationList || []}
       currentPage={1}
       total={count!}
       pageSize={InfoPageSize}

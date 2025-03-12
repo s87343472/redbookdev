@@ -34,10 +34,28 @@ export default async function Page({ params }: { params: { search?: string } }) 
   const supabase = createClient();
   const t = await getTranslations('Home');
   const { data: categoryList } = await supabase.from('navigation_category').select();
-  const { data: dataList } = await supabase
-    .from('web_navigation')
+  const { data: projectList } = await supabase
+    .from('redbook_projects')
     .select()
-    .ilike('detail', `%${decodeURI(params?.search || '')}%`);
+    .eq('status', 'approved')
+    .or(`title.ilike.%${decodeURI(params?.search || '')}%,description.ilike.%${decodeURI(params?.search || '')}%`);
+
+  // 将 redbook_projects 数据转换为 web_navigation 格式
+  const dataList = projectList?.map(project => ({
+    id: project.id,
+    name: project.title,
+    title: project.title,
+    content: project.description,
+    detail: project.description,
+    url: project.website_url,
+    image_url: project.screenshot_urls[0] || '',
+    thumbnail_url: project.screenshot_urls[0] || '',
+    website_data: '',
+    collection_time: project.created_at,
+    star_rating: 5,
+    tag_name: project.tags?.join(',') || '',
+    category_name: project.category
+  }));
 
   return (
     <Suspense fallback={<Loading />}>
@@ -56,7 +74,7 @@ export default async function Page({ params }: { params: { search?: string } }) 
         {dataList && !!dataList.length && params?.search ? (
           <>
             <h2 className='mb-1 text-left text-[18px] lg:text-2xl'>{t('result')}</h2>
-            <WebNavCardList dataList={dataList!} />
+            <WebNavCardList dataList={dataList} />
           </>
         ) : (
           <Empty title={t('empty')} />
