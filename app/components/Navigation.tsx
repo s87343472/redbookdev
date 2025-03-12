@@ -12,7 +12,7 @@ export default function Navigation() {
       <div className='mx-auto flex h-16 max-w-pc items-center justify-between px-4'>
         <Link href='/' className='flex items-center gap-2'>
           <Logo className='h-8 w-8' />
-          <span className='text-lg font-bold'>{t('title')}</span>
+          <span className='text-lg font-bold'>RedBook Dev</span>
         </Link>
 
         <div className='flex items-center gap-4'>

@@ -12,6 +12,8 @@ import Loading from './loading';
 import './globals.css';
 
 export const metadata: Metadata = {
+  title: 'RedBook Dev - Discover Great RedBook Developer Works',
+  description: 'Showcase your creativity and gain more attention',
   icons: {
     icon: [
       {
