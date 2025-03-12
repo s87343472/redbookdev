@@ -5,6 +5,7 @@ import { createClient } from '@/db/supabase/client';
 import { CircleChevronRight } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
+import { CATEGORIES } from '@/lib/categories';
 import { RevalidateOneHour } from '@/lib/constants';
 import Faq from '@/components/Faq';
 import SearchForm from '@/components/home/SearchForm';
@@ -20,6 +21,18 @@ export async function generateMetadata({ params: { locale } }: { params: { local
     namespace: 'Metadata.home',
   });
 
+  const supabase = createClient();
+  const { data: projects } = await supabase
+    .from('redbook_projects')
+    .select('*')
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false });
+
+  const projectsWithCategory = (projects || []).map((project) => ({
+    ...project,
+    category: CATEGORIES.find((cat: { code: string }) => cat.code === project.category),
+  }));
+
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL as string),
     title: t('title'),
@@ -27,6 +40,10 @@ export async function generateMetadata({ params: { locale } }: { params: { local
     keywords: t('keywords'),
     alternates: {
       canonical: './',
+    },
+    openGraph: {
+      title: t('title'),
+      description: t('description'),
     },
   };
 }
@@ -47,7 +64,7 @@ export default async function Page() {
   ]);
 
   // 将 redbook_projects 数据转换为 web_navigation 格式
-  const navigationList = projectList?.map(project => ({
+  const navigationList = projectList?.map((project) => ({
     id: project.id,
     name: project.title,
     title: project.title,
@@ -60,7 +77,7 @@ export default async function Page() {
     collection_time: project.created_at,
     star_rating: 5,
     tag_name: project.tags?.join(',') || '',
-    category_name: project.category
+    category_name: project.category,
   }));
 
   return (

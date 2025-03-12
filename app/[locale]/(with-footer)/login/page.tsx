@@ -1,154 +1,126 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/db/supabase/client';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
-import { useRouter } from '@/app/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
+  const t = useTranslations('Login');
   const supabase = createClient();
 
-  // 检查登录状态
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user?.id) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single();
-
-          if (profile?.role === 'admin') {
-            router.replace(`/${locale}/admin`);
-          }
+    const checkAuth = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (session) {
+          router.replace(`/${locale}`);
         }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : '未知错误';
+        toast.error(errorMessage);
       }
     };
-    checkSession();
-  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    checkAuth();
+  }, [locale, router, supabase]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      setLoading(true);
+
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (signInError) throw signInError;
-
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user?.id) throw new Error('未找到用户信息');
-      
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.role === 'admin') {
-        toast.success('登录成功');
-        // 使用 replace 而不是 push，这样不会在历史记录中留下登录页
-        setTimeout(() => {
-          router.replace(`/${locale}/admin`);
-        }, 100);
-      } else {
-        await supabase.auth.signOut();
-        toast.error('没有管理员权限');
+      if (error) {
+        throw new Error(error.message);
       }
-    } catch (error) {
-      console.error('登录失败:', error);
-      toast.error('登录失败，请检查邮箱和密码');
+
+      router.replace(`/${locale}`);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '未知错误';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-      toast.error('请输入邮箱地址');
-      return;
-    }
-    
-    setIsResetting(true);
+  const handleResetPassword = async () => {
     try {
+      if (!email) {
+        throw new Error('请输入邮箱');
+      }
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/${locale}/reset-password`,
       });
-      
-      if (error) throw error;
-      
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
       toast.success('重置密码邮件已发送，请查收');
-    } catch (error) {
-      console.error('发送重置密码邮件失败:', error);
-      toast.error('发送重置密码邮件失败');
-    } finally {
-      setIsResetting(false);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '未知错误';
+      toast.error(errorMessage);
     }
   };
 
   return (
-    <div className="container max-w-md py-8">
-      <h1 className="text-2xl font-bold mb-8 text-center">管理员登录</h1>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-2">邮箱</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full p-2 border rounded bg-background text-foreground"
-            placeholder="请输入邮箱"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2">密码</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full p-2 border rounded bg-background text-foreground"
-            placeholder="请输入密码"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-        >
-          {loading ? '登录中...' : '登录'}
-        </button>
-
-        <div className="text-center">
+    <div className='mx-auto flex min-h-[calc(100vh-120px)] w-full max-w-pc items-center justify-center px-3 lg:px-0'>
+      <div className='w-full max-w-[400px] rounded-lg bg-card p-6'>
+        <h1 className='mb-6 text-center text-2xl font-bold'>{t('title')}</h1>
+        <form onSubmit={handleLogin} className='flex flex-col gap-4'>
+          <div>
+            <label htmlFor='email' className='mb-2 block text-sm font-medium'>
+              {t('email')}
+            </label>
+            <input
+              id='email'
+              type='email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className='w-full rounded-lg border border-white/10 bg-transparent px-3 py-2 text-sm focus:outline-none'
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor='password' className='mb-2 block text-sm font-medium'>
+              {t('password')}
+            </label>
+            <input
+              id='password'
+              type='password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className='w-full rounded-lg border border-white/10 bg-transparent px-3 py-2 text-sm focus:outline-none'
+              required
+            />
+          </div>
           <button
-            type="button"
-            onClick={handleResetPassword}
-            disabled={isResetting}
-            className="text-blue-500 hover:underline"
+            type='submit'
+            disabled={loading}
+            className='mt-2 h-10 rounded-lg bg-white px-4 text-sm font-medium text-black hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50'
           >
-            {isResetting ? '发送中...' : '忘记密码？'}
+            {loading ? t('loading') : t('submit')}
           </button>
-        </div>
-      </form>
+          <button type='button' onClick={handleResetPassword} className='text-sm text-white/60 hover:text-white'>
+            {t('resetPassword')}
+          </button>
+        </form>
+      </div>
     </div>
   );
-} 
+}

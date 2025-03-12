@@ -7,47 +7,56 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
+import * as z from 'zod';
 
 import { FORM_PLACEHOLDER, WEBSITE_EXAMPLE } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import Spinning from '@/components/Spinning';
 import ImageUpload from '@/components/ImageUpload';
+import Spinning from '@/components/Spinning';
 
-const FormSchema = z.object({
+const formSchema = z.object({
   title: z.string().min(1, {
-    message: '请输入项目名称'
+    message: '请输入项目名称',
   }),
   description: z.string().min(1, {
-    message: '请输入项目描述'
+    message: '请输入项目描述',
   }),
-  website_url: z.string().url({
-    message: '请输入有效的网址'
+  website_url: z.string().min(1, {
+    message: '请输入项目链接',
   }),
-  redbook_url: z.string().url({
-    message: '请输入有效的小红书笔记链接'
+  redbook_url: z.string().min(1, {
+    message: '请输入小红书链接',
   }),
   creator_name: z.string().min(1, {
-    message: '请输入创作者名称'
+    message: '请输入创作者名称',
   }),
   creator_redbook_id: z.string().min(1, {
-    message: '请输入小红书ID'
+    message: '请输入小红书ID',
   }),
-  category: z.enum(['web', 'app', 'tool', 'other']),
-  tags: z.string(),
+  category: z.string().min(1, {
+    message: '请选择分类',
+  }),
+  tags: z.array(z.string()).min(1, {
+    message: '请输入标签',
+  }),
+  screenshot_urls: z.array(z.string()).min(1, {
+    message: '请上传截图',
+  }),
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 export default function SubmitForm({ className }: { className?: string }) {
   const supabase = createClient();
-  const t = useTranslations('Submit.form');
+  const t = useTranslations('Submit');
   const [loading, setLoading] = useState(false);
   const [screenshotUrls, setScreenshotUrls] = useState<string[]>([]);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
       description: '',
@@ -55,12 +64,13 @@ export default function SubmitForm({ className }: { className?: string }) {
       redbook_url: '',
       creator_name: '',
       creator_redbook_id: '',
-      category: 'web',
-      tags: '',
+      category: '',
+      tags: [],
+      screenshot_urls: [],
     },
   });
 
-  const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
+  const onSubmit = async (values: FormValues) => {
     if (screenshotUrls.length === 0) {
       toast.error(t('screenshot_required'));
       return;
@@ -69,26 +79,25 @@ export default function SubmitForm({ className }: { className?: string }) {
     try {
       setLoading(true);
       const { error } = await supabase.from('redbook_projects').insert({
-        title: formData.title,
-        description: formData.description,
-        website_url: formData.website_url,
-        redbook_url: formData.redbook_url,
-        creator_name: formData.creator_name,
-        creator_redbook_id: formData.creator_redbook_id,
-        category: formData.category,
-        tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-        screenshot_urls: screenshotUrls,
-        status: 'pending'
+        ...values,
+        status: 'pending',
       });
-      
-      if (error) throw error;
-      
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
       toast.success(t('success'));
       form.reset();
       setScreenshotUrls([]);
     } catch (error) {
-      console.error(t('error'), error);
-      toast.error(t('error'));
+      if (error instanceof Error) {
+        console.error(t('error'), error.message);
+        toast.error(error.message);
+      } else {
+        console.error(t('error'), error);
+        toast.error(t('error'));
+      }
     } finally {
       setLoading(false);
     }
@@ -96,6 +105,10 @@ export default function SubmitForm({ className }: { className?: string }) {
 
   const handleImagesUploaded = (urls: string[]) => {
     setScreenshotUrls(urls);
+  };
+
+  const removeScreenshot = (url: string) => {
+    setScreenshotUrls(screenshotUrls.filter((u) => u !== url));
   };
 
   return (
@@ -258,18 +271,31 @@ export default function SubmitForm({ className }: { className?: string }) {
             )}
           />
 
-          <div className='space-y-1'>
-            <FormLabel>{t('screenshots')} *</FormLabel>
-            <ImageUpload onImagesUploaded={handleImagesUploaded} />
+          <div className='mt-4'>
+            <div className='mb-4'>
+              <label className='block text-sm font-medium text-gray-700'>{t('screenshots')} *</label>
+              <ImageUpload onImagesUploaded={handleImagesUploaded} />
+            </div>
             {screenshotUrls.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                {screenshotUrls.map((url, index) => (
-                  <div key={url} className="relative aspect-video">
-                    <img
-                      src={url}
-                      alt={`项目截图 ${index + 1}`}
-                      className="w-full h-full object-cover rounded"
-                    />
+              <div className='mt-4 grid grid-cols-2 gap-4'>
+                {screenshotUrls.map((url) => (
+                  <div key={url} className='relative'>
+                    <img src={url} alt='Screenshot' className='h-32 w-full rounded object-cover' />
+                    <button
+                      type='button'
+                      onClick={() => removeScreenshot(url)}
+                      className='absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600'
+                    >
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        className='h-4 w-4'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                      >
+                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
+                      </svg>
+                    </button>
                   </div>
                 ))}
               </div>
@@ -278,19 +304,22 @@ export default function SubmitForm({ className }: { className?: string }) {
         </div>
 
         <div className='mt-8 flex flex-col gap-[10px] lg:gap-8'>
-          <button
-            type='submit'
-            disabled={loading}
-            className={cn(
-              'flex-center h-[48px] w-full gap-4 rounded-[8px] bg-white text-center font-bold text-black hover:cursor-pointer hover:opacity-80',
-              loading && 'hover:cursor-not-allowed',
+          <div className='flex items-center justify-center'>
+            {loading ? (
+              <div className='flex items-center space-x-2'>
+                <Spinning />
+                <span>{t('submitting')}</span>
+              </div>
+            ) : (
+              <button
+                type='submit'
+                className='h-[42px] w-[120px] rounded-[8px] bg-gradient-to-r from-[#FF4D4D] to-[#F9C76C] font-medium text-white hover:opacity-80'
+              >
+                {t('submit')}
+              </button>
             )}
-          >
-            {loading ? <Spinning className='size-[22px]' /> : t('submit')}
-          </button>
-          <p className='text-[13px] text-white/40'>
-            {t('pending_notice')}
-          </p>
+          </div>
+          <p className='text-[13px] text-white/40'>{t('pending_notice')}</p>
         </div>
       </form>
     </Form>
