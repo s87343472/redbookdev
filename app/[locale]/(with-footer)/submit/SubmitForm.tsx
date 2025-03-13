@@ -17,43 +17,43 @@ import { Textarea } from '@/components/ui/textarea';
 import ImageUpload from '@/components/ImageUpload';
 import Spinning from '@/components/Spinning';
 
-const formSchema = z.object({
-  title: z.string().min(1, {
-    message: '请输入项目名称',
-  }),
-  description: z.string().min(1, {
-    message: '请输入项目描述',
-  }),
-  website_url: z.string().min(1, {
-    message: '请输入项目链接',
-  }),
-  redbook_url: z.string().min(1, {
-    message: '请输入小红书链接',
-  }),
-  creator_name: z.string().min(1, {
-    message: '请输入创作者名称',
-  }),
-  creator_redbook_id: z.string().min(1, {
-    message: '请输入小红书ID',
-  }),
-  category: z.string().min(1, {
-    message: '请选择分类',
-  }),
-  tags: z.array(z.string()).min(1, {
-    message: '请输入标签',
-  }),
-  screenshot_urls: z.array(z.string()).min(1, {
-    message: '请上传截图',
-  }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 export default function SubmitForm({ className }: { className?: string }) {
   const supabase = createClient();
   const t = useTranslations('Submit');
   const [loading, setLoading] = useState(false);
   const [screenshotUrls, setScreenshotUrls] = useState<string[]>([]);
+
+  const formSchema = z.object({
+    title: z.string().min(1, {
+      message: t('error_title_required'),
+    }),
+    description: z.string().min(1, {
+      message: t('error_description_required'),
+    }),
+    website_url: z.string().min(1, {
+      message: t('error_website_url_required'),
+    }),
+    redbook_url: z.string().min(1, {
+      message: t('error_redbook_url_required'),
+    }),
+    creator_name: z.string().min(1, {
+      message: t('error_creator_name_required'),
+    }),
+    creator_redbook_id: z.string().min(1, {
+      message: t('error_creator_redbook_id_required'),
+    }),
+    category: z.string().min(1, {
+      message: t('error_category_required'),
+    }),
+    tags: z.array(z.string()).min(1, {
+      message: t('error_tags_required'),
+    }),
+    screenshot_urls: z.array(z.string()).min(1, {
+      message: t('error_screenshots_required'),
+    }),
+  });
+
+  type FormValues = z.infer<typeof formSchema>;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -64,7 +64,7 @@ export default function SubmitForm({ className }: { className?: string }) {
       redbook_url: '',
       creator_name: '',
       creator_redbook_id: '',
-      category: '',
+      category: 'web',
       tags: [],
       screenshot_urls: [],
     },
@@ -78,8 +78,18 @@ export default function SubmitForm({ className }: { className?: string }) {
 
     try {
       setLoading(true);
-      const { error } = await supabase.from('redbook_projects').insert({
+
+      // 自动添加https://前缀（如果没有的话）
+      const formattedValues = {
         ...values,
+        website_url: values.website_url.startsWith('http') ? values.website_url : `https://${values.website_url}`,
+        redbook_url: values.redbook_url.startsWith('http') ? values.redbook_url : `https://${values.redbook_url}`,
+        // 确保使用最新的screenshotUrls
+        screenshot_urls: screenshotUrls,
+      };
+
+      const { error } = await supabase.from('redbook_projects').insert({
+        ...formattedValues,
         status: 'pending',
       });
 
@@ -105,10 +115,13 @@ export default function SubmitForm({ className }: { className?: string }) {
 
   const handleImagesUploaded = (urls: string[]) => {
     setScreenshotUrls(urls);
+    form.setValue('screenshot_urls', urls);
   };
 
   const removeScreenshot = (url: string) => {
-    setScreenshotUrls(screenshotUrls.filter((u) => u !== url));
+    const newUrls = screenshotUrls.filter((u) => u !== url);
+    setScreenshotUrls(newUrls);
+    form.setValue('screenshot_urls', newUrls);
   };
 
   return (
@@ -165,8 +178,8 @@ export default function SubmitForm({ className }: { className?: string }) {
                 <FormLabel>{t('url')} *</FormLabel>
                 <FormControl>
                   <Input
-                    type='url'
-                    placeholder='https://your-project.com'
+                    type='text'
+                    placeholder='your-project.com'
                     className='input-border-pink h-[42px] w-full rounded-[8px] border-[0.5px] bg-dark-bg p-5'
                     {...field}
                   />
@@ -184,8 +197,8 @@ export default function SubmitForm({ className }: { className?: string }) {
                 <FormLabel>{t('redbook_url')} *</FormLabel>
                 <FormControl>
                   <Input
-                    type='url'
-                    placeholder='https://www.xiaohongshu.com/...'
+                    type='text'
+                    placeholder='www.xiaohongshu.com/...'
                     className='input-border-pink h-[42px] w-full rounded-[8px] border-[0.5px] bg-dark-bg p-5'
                     {...field}
                   />
@@ -263,7 +276,15 @@ export default function SubmitForm({ className }: { className?: string }) {
                   <Input
                     placeholder={t('tags_placeholder')}
                     className='input-border-pink h-[42px] w-full rounded-[8px] border-[0.5px] bg-dark-bg p-5'
-                    {...field}
+                    value={field.value ? field.value.join(', ') : ''}
+                    onChange={(e) => {
+                      const tagsString = e.target.value;
+                      const tagsArray = tagsString
+                        .split(',')
+                        .map((tag) => tag.trim())
+                        .filter((tag) => tag !== '');
+                      field.onChange(tagsArray);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />

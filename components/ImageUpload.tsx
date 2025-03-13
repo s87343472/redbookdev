@@ -23,7 +23,7 @@ export default function ImageUpload({ onImagesUploaded }: ImageUploadProps) {
           const fileName = `${Math.random()}.${fileExt}`;
           const filePath = `${fileName}`;
 
-          const { error: uploadError } = await supabase.storage.from('screenshots').upload(filePath, file);
+          const { error: uploadError } = await supabase.storage.from('project-images').upload(filePath, file);
 
           if (uploadError) {
             throw new Error(uploadError.message);
@@ -31,7 +31,7 @@ export default function ImageUpload({ onImagesUploaded }: ImageUploadProps) {
 
           const {
             data: { publicUrl },
-          } = supabase.storage.from('screenshots').getPublicUrl(filePath);
+          } = supabase.storage.from('project-images').getPublicUrl(filePath);
 
           urls.push(publicUrl);
         }
@@ -76,7 +76,7 @@ export default function ImageUpload({ onImagesUploaded }: ImageUploadProps) {
       for (const { file } of previewImages) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-        const filePath = `screenshots/${fileName}`;
+        const filePath = `${fileName}`;
 
         const { error: uploadError, data } = await supabase.storage.from('project-images').upload(filePath, file);
 
