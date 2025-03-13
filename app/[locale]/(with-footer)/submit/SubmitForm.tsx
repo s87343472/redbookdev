@@ -1,7 +1,7 @@
 'use client';
 
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createClient } from '@/db/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -22,6 +22,7 @@ export default function SubmitForm({ className }: { className?: string }) {
   const t = useTranslations('Submit');
   const [loading, setLoading] = useState(false);
   const [screenshotUrls, setScreenshotUrls] = useState<string[]>([]);
+  const [tagsInput, setTagsInput] = useState('');
 
   const formSchema = z.object({
     title: z.string().min(1, {
@@ -69,6 +70,13 @@ export default function SubmitForm({ className }: { className?: string }) {
       screenshot_urls: [],
     },
   });
+
+  useEffect(() => {
+    const currentTags = form.getValues('tags');
+    if (currentTags && currentTags.length > 0) {
+      setTagsInput(currentTags.join(', '));
+    }
+  }, [form]);
 
   const onSubmit = async (values: FormValues) => {
     if (screenshotUrls.length === 0) {
@@ -276,10 +284,13 @@ export default function SubmitForm({ className }: { className?: string }) {
                   <Input
                     placeholder={t('tags_placeholder')}
                     className='input-border-pink h-[42px] w-full rounded-[8px] border-[0.5px] bg-dark-bg p-5'
-                    value={field.value ? field.value.join(', ') : ''}
+                    value={tagsInput}
                     onChange={(e) => {
-                      const tagsString = e.target.value;
-                      const tagsArray = tagsString
+                      const newValue = e.target.value;
+                      setTagsInput(newValue);
+
+                      // 更新表单字段值
+                      const tagsArray = newValue
                         .split(',')
                         .map((tag) => tag.trim())
                         .filter((tag) => tag !== '');

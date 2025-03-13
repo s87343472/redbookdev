@@ -1,7 +1,6 @@
 'use client';
 
 /* eslint-disable react/jsx-no-target-blank */
-
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { WebNavigation } from '@/db/supabase/types';
@@ -24,9 +23,12 @@ export default function WebNavCard({ id, name, thumbnail_url, title, url, conten
     websiteUrl.searchParams.set('utm_campaign', 'redbook_dev');
   }
 
+  // 对标题进行URL编码，以支持中文和其他非英文字符
+  const encodedTitle = encodeURIComponent(title || '');
+
   return (
     <div className='flex h-[210px] flex-col gap-3 rounded-xl bg-[#2C2D36] p-1 lg:h-[343px]'>
-      <Link href={`/${locale}/ai/${title}`} title={title ?? ''} className='group relative'>
+      <Link href={`/${locale}/ai/${encodedTitle}`} title={title ?? ''} className='group relative'>
         <img
           src={thumbnail_url ?? ''}
           alt={title ?? ''}
@@ -40,10 +42,22 @@ export default function WebNavCard({ id, name, thumbnail_url, title, url, conten
         </div>
       </Link>
       <div className='flex items-center justify-between px-[6px]'>
-        <a href={websiteUrl?.toString() ?? '#'} title={title ?? ''} target='_blank' rel='nofollow' className='hover:opacity-70'>
+        <a
+          href={websiteUrl?.toString() ?? '#'}
+          title={title ?? ''}
+          target='_blank'
+          rel='nofollow'
+          className='hover:opacity-70'
+        >
           <h3 className='line-clamp-1 flex-1 text-sm font-bold lg:text-base'>{title ?? ''}</h3>
         </a>
-        <a href={websiteUrl?.toString() ?? '#'} title={title ?? ''} target='_blank' rel='nofollow' className='hover:opacity-70'>
+        <a
+          href={websiteUrl?.toString() ?? '#'}
+          title={title ?? ''}
+          target='_blank'
+          rel='nofollow'
+          className='hover:opacity-70'
+        >
           <SquareArrowOutUpRight className='size-5' />
           <span className='sr-only'>{title ?? ''}</span>
         </a>

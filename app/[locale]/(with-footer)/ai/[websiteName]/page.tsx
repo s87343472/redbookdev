@@ -18,13 +18,15 @@ export async function generateMetadata({
     locale,
     namespace: 'Metadata.ai',
   });
-  
+
   try {
+    const decodedWebsiteName = decodeURIComponent(websiteName);
+
     const { data, error } = await supabase
       .from('redbook_projects')
       .select()
       .eq('status', 'approved')
-      .eq('title', websiteName)
+      .eq('title', decodedWebsiteName)
       .single();
 
     if (error || !data) {
@@ -52,11 +54,13 @@ export default async function Page({ params: { websiteName } }: { params: { webs
   const t = await getTranslations('Startup.detail');
 
   try {
+    const decodedWebsiteName = decodeURIComponent(websiteName);
+
     const { data, error } = await supabase
       .from('redbook_projects')
       .select()
       .eq('status', 'approved')
-      .eq('title', websiteName)
+      .eq('title', decodedWebsiteName)
       .single();
 
     if (error) {
